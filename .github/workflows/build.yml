@@ -2,6 +2,8 @@ name: CI Pipeline
 
 on:
   push:
+    branches:
+      - master
 
 env:
   DOCKER_IMAGE: deepak8934/petapp:${{ github.sha }}
