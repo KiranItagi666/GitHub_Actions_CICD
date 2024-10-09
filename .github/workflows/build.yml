@@ -1,0 +1,84 @@
+name: CI Pipeline
+
+on:
+  push:
+
+env:
+  DOCKER_IMAGE: deepak8934/petapp:${{ github.sha }}
+  MAVEN_OPTS: "-DskipTests=true"
+  SONAR_HOST_URL: "https://sonarcloud.io"
+  SONAR_USER_HOME: ${{ github.workspace }}/.sonar
+  GIT_DEPTH: 0
+  DOCKER_DRIVER: overlay2
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set Output Image
+        id: set-output
+        run: echo "::set-output name=image::deepak8934/petapp:${{ github.sha }}"
+
+      - name: Cache Maven Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+
+      - name: Build with Maven
+        run: mvn clean package ${{ env.MAVEN_OPTS }}
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: jar
+          path: target/*.jar
+
+      - name: Run Unit Tests
+        run: mvn test
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: target/test-classes/TEST-*.xml
+
+      - name: Install Trivy
+        run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
+
+      - name: Trivy File System Scan
+        run: trivy fs . --cache-dir trivycache
+
+      - name: Build Docker Image
+        run: |
+          docker build --cache-from ${{ env.DOCKER_IMAGE }} -t ${{ env.DOCKER_IMAGE }} .
+          docker save ${{ env.DOCKER_IMAGE }} > docker_image.tar
+
+      - name: Upload Docker Image Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: docker-image
+          path: docker_image.tar
+
+      - name: Load Docker Image
+        run: docker load < docker_image.tar
+
+      - name: Trivy Scan Docker Image
+        run: |
+          trivy image ${{ env.DOCKER_IMAGE }} --scanners vuln --exit-code 0 --no-progress --format json --output trivyimage.json --cache-dir trivycache
+
+      - name: Upload Trivy Scan Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: trivy-image-scan
+          path: trivyimage.json
+
+      - name: Log in to DockerHub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Push Docker Image
+        run: docker push ${{ env.DOCKER_IMAGE }}
