@@ -8,8 +8,9 @@ on:
 env:
   DOCKER_IMAGE: deepak8934/petapp:${{ github.sha }}
   MAVEN_OPTS: "-DskipTests=true"
-  SONAR_HOST_URL: "https://sonarcloud.io"
-  SONAR_USER_HOME: ${{ github.workspace }}/.sonar
+  SONAR_HOST_URL: "https://sonarcloud.io"  # Change this to your SonarQube server URL if different
+  SONAR_PROJECT_KEY: "your_project_key"     # Replace with your actual Sonar project key
+  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # Ensure you have this token in your GitHub secrets
   GIT_DEPTH: 0
   DOCKER_DRIVER: overlay2
 
@@ -40,6 +41,10 @@ jobs:
         run: mvn clean install
         working-directory: ${{ github.workspace }}
 
+      - name: SonarCloud Scan
+        #run: mvn sonar:sonar -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }} -Dsonar.host.url=${{ env.SONAR_HOST_URL }} -Dsonar.login=${{ secret.DevSecops_Pipeline_Token }}
+        run: mvn sonar:sonar -Dsonar.projectKey=ankit20000_DevSecops_Pipeline -Dsonar.host.url=https://sonarcloud.io -Dsonar.host.url=3efd906389f89ff2f42493c5bda21481a0a75a68
+
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -57,12 +62,9 @@ jobs:
 
       - name: Install Snyk
         run: npm install -g snyk
-      - name: Install Snyk
-        run: sudo apt-get install lynx
-
 
       - name: Authenticate Snyk
-        run: snyk auth ${{ secrets.SYNK_API_TOKEN }} --debug
+        run: snyk auth ${{ secrets.SNYK_API_TOKEN }} --debug
 
       - name: Snyk Maven Dependency Scan
         run: snyk test
