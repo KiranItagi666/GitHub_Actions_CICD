@@ -57,6 +57,9 @@ jobs:
 
       - name: Install Snyk
         run: npm install -g snyk
+      - name: Install Snyk
+        run: sudo apt-get install lynx
+
 
       - name: Authenticate Snyk
         run: snyk auth ${{ secrets.SYNK_API_TOKEN }} --debug
