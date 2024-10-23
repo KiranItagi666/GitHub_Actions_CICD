@@ -59,7 +59,7 @@ jobs:
         run: npm install -g snyk
 
       - name: Authenticate Snyk
-        run: snyk auth "${{ secrets.SYNK_API_TOKEN }}"
+        run: snyk auth ${{ secrets.SYNK_API_TOKEN }} --debug
 
       - name: Snyk Maven Dependency Scan
         run: snyk test --maven
