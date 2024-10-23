@@ -55,7 +55,6 @@ jobs:
           name: test-results
           path: target/test-classes/TEST-*.xml
 
-      # Snyk Integration for vulnerability scanning
       - name: Install Snyk
         run: npm install -g snyk
 
