@@ -65,7 +65,7 @@ jobs:
         run: snyk auth ${{ secrets.SYNK_API_TOKEN }} --debug
 
       - name: Snyk Maven Dependency Scan
-        run: snyk test --maven
+        run: snyk test
 
       - name: Snyk Docker Image Scan
         run: snyk container test ${{ env.DOCKER_IMAGE }}
