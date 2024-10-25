@@ -1,4 +1,3 @@
-# .github/workflows/feature.yml
 name: CI Pipeline
 
 on:
