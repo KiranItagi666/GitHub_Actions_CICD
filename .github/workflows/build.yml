@@ -82,8 +82,8 @@
       
             - name: Build Docker Image
               run: |
-                docker build -t ${{ env.DOCKER_IMAGE }} .
-                docker save ${{ env.DOCKER_IMAGE }} > docker_image.tar
+                sudo docker build -t ${{ env.DOCKER_IMAGE }} .
+                sudo docker save ${{ env.DOCKER_IMAGE }} > docker_image.tar
       
             - name: Upload Docker Image Artifact
               uses: actions/upload-artifact@v3
