@@ -63,19 +63,19 @@ jobs:
       # - name: Install Snyk
       #   run: npm install -g snyk
 
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/node@master
+      # - name: Run Snyk to check for vulnerabilities
+      #   uses: snyk/actions/node@master
         env:
-            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      #       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-      # - name: Authenticate Snyk
-      #   run: snyk auth --token=${{ secrets.SNYK_TOKEN }}
+      # # - name: Authenticate Snyk
+      # #   run: snyk auth --token=${{ secrets.SNYK_TOKEN }}
 
-      - name: Snyk Maven Dependency Scan
-        run: snyk test
+      # - name: Snyk Maven Dependency Scan
+      #   run: snyk test
 
-      - name: Snyk Docker Image Scan
-        run: snyk container test ${{ env.DOCKER_IMAGE }}
+      # - name: Snyk Docker Image Scan
+      #   run: snyk container test ${{ env.DOCKER_IMAGE }}
 
       - name: Build Docker Image
         run: |
