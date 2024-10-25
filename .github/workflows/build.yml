@@ -1,3 +1,23 @@
+      # - name: Install Snyk
+      #   run: npm install -g snyk
+
+      # - name: Run Snyk to check for vulnerabilities
+      #   uses: snyk/actions/node@master
+        #env:
+      #       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      # # - name: Authenticate Snyk
+      # #   run: snyk auth --token=${{ secrets.SNYK_TOKEN }}
+
+      # - name: Snyk Maven Dependency Scan
+      #   run: snyk test
+
+      # - name: Snyk Docker Image Scan
+      #   run: snyk container test ${{ env.DOCKER_IMAGE }}
+
+
+  
+
 name: CI Pipeline
 
 on:
@@ -8,9 +28,9 @@ on:
 env:
   DOCKER_IMAGE: deepak8934/petapp:${{ github.sha }}
   MAVEN_OPTS: "-DskipTests=true"
-  SONAR_HOST_URL: "https://sonarcloud.io"  # Replace with your SonarQube server URL if different
-  SONAR_PROJECT_KEY: "your_project_key"     # Replace with your actual Sonar project key
-  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # Ensure this token is in your GitHub secrets
+  # SONAR_HOST_URL: "https://sonarcloud.io"  # Replace with your SonarQube server URL if different
+  # SONAR_PROJECT_KEY: "your_project_key"     # Replace with your actual Sonar project key
+  # SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # Ensure this token is in your GitHub secrets
   GIT_DEPTH: 0
   DOCKER_DRIVER: overlay2
 
@@ -42,7 +62,7 @@ jobs:
         run: mvn clean install
 
       - name: SonarCloud Scan
-        run: mvn sonar:sonar -Dsonar.projectKey=${{ env.SONAR_PROJECT_KEY }} -Dsonar.organization=ankit20000 -Dsonar.host.url=${{ env.SONAR_HOST_URL }} -Dsonar.login=${{ env.SONAR_TOKEN }}
+        run: mvn sonar:sonar -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} -Dsonar.organization=ankit20000 -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} -Dsonar.login=${{ secrets.SYNK_API_TOKEN }}
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v3
@@ -75,3 +95,4 @@ jobs:
 
       - name: Push Docker Image
         run: docker push ${{ env.DOCKER_IMAGE }}
+
