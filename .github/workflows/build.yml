@@ -36,7 +36,7 @@ env:
 
 jobs:
   build_and_test:
-    runs-on: self-hosted  # Use your self-hosted runner on EC2
+    runs-on: self-hosted 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
