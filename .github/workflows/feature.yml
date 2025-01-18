@@ -1,5 +1,4 @@
 name: CI Pipeline
-# runnign the pipeline
 on:
   push:
     branches:
