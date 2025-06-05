@@ -1,24 +1,24 @@
 # .github/workflows/imagepush.yml
-name: Docker Image Build and Push
+name: Docker image Build and Push
 
 on:
  workflow_call:
 
 jobs:
   image_push:
-    runs-on: java_build
+    runs-on: build-server
     env:
-      DOCKER_IMAGE: ankit1111/petapp:${{ github.sha }}
+      DOCKER_IMAGE: kviondocker/petapp:${{ github.sha }}
 
     steps:
-      - name: Build Docker Image
+      - name: Build the Docker Image
         run: |
           sudo docker build -t ${{ env.DOCKER_IMAGE }} .
           sudo docker save ${{ env.DOCKER_IMAGE }} > docker_image.tar
 
 
-      - name: Log in to DockerHub
+      - name: Login to the DockerHub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      - name: Push Docker Image
+      - name: Push the Docker Image
         run: sudo docker push ${{ env.DOCKER_IMAGE }}
