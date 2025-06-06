@@ -6,17 +6,17 @@ on:
 
 jobs:
   sonar:
-    # Use your "awsubuntu" runner (labels: self-hosted, Linux, X64)
     runs-on: [self-hosted, Linux, X64]
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
 
-      - name: Set up JDK 11
+      - name: Set up JDK 11       # <-- Add "distribution" here
         uses: actions/setup-java@v3
         with:
           java-version: '11'
+          distribution: 'temurin'   # <-- Must specify a JDK distribution
 
       - name: Cache Sonar Scanner data
         uses: actions/cache@v3
