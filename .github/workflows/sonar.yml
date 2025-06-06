@@ -15,8 +15,8 @@ jobs:
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          java-version: '17'         # ← Switch from '11' to '17'
-          distribution: 'temurin'    # ← A JDK distribution that provides Java 17
+          java-version: '17'
+          distribution: 'temurin'
 
       - name: Cache Sonar Scanner data
         uses: actions/cache@v3
@@ -27,7 +27,7 @@ jobs:
       - name: Run SonarCloud Analysis
         run: |
           mvn sonar:sonar \
-            -Dsonar.projectKey=KiranItagi666_GitHub_Actions_CICD \
-            -Dsonar.organization=devops-project3884530 \
+            -Dsonar.projectKey=KiranItaagi666_GitHub_Actions_CICD \
+            -Dsonar.organization=kiranitagi666 \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
