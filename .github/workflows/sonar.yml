@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0        # ensure full Git history so Sonar can identify branches
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -24,11 +26,17 @@ jobs:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
 
+      - name: Determine branch name
+        id: get_branch
+        run: |
+          # Extract only the branch name from GITHUB_REF
+          echo "::set-output name=BRANCH::${GITHUB_REF#refs/heads/}"
+
       - name: Run SonarCloud Analysis
         run: |
           mvn sonar:sonar \
-            -Dsonar.projectKey=kiranitaagi666_GitHub_Actions_CICD \
+            -Dsonar.projectKey=KiranItaagi666_GitHub_Actions_CICD \
             -Dsonar.organization=kiranitagi666 \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
-            -Dsonar.branch.name=main
+            -Dsonar.branch.name=${{ steps.get_branch.outputs.BRANCH }}
