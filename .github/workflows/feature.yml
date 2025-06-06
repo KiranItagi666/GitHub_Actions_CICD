@@ -1,29 +1,33 @@
-name: CI_Pipeline
+# .github/workflows/feature.yml
+name: CI Pipeline
+
 on:
   push:
     branches:
-      - master 
+      - master
       - develop
-      - main      
+      - main
+
 env:
-        DOCKER_IMAGE: kviondocker/petapp:${{ github.sha }}
-        MAVEN_OPTS: "-DskipTests=true"      
+  DOCKER_IMAGE: kviondocker/petapp:${{ github.sha }}
+  MAVEN_OPTS: "-DskipTests=true"
 
 jobs:
   build:
     uses: ./.github/workflows/javabuild.yml
     secrets: inherit
+
   sonar:
-     uses: ./.github/workflows/sonar.yml
-     needs: build
-     secrets: inherit     
+    needs: build
+    uses: ./.github/workflows/sonar.yml
+    secrets: inherit
 
   test:
-    uses: ./.github/workflows/test.yml
     needs: sonar
-    secrets: inherit  
+    uses: ./.github/workflows/test.yml
+    secrets: inherit
 
   imagepush:
-    uses: ./.github/workflows/imagepush.yml
     needs: test
-    secrets: inherit  
+    uses: ./.github/workflows/imagepush.yml
+    secrets: inherit

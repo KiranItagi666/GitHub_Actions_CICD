@@ -2,23 +2,26 @@
 name: Docker image Build and Push
 
 on:
- workflow_call:
+  workflow_call:
 
 jobs:
   image_push:
-    runs-on: build-server
+    runs-on: [self-hosted, Linux, X64]   # Use the awsubuntu runner (labels: self-hosted, Linux, X64)
     env:
       DOCKER_IMAGE: kviondocker/petapp:${{ github.sha }}
 
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
       - name: Build the Docker Image
         run: |
           sudo docker build -t ${{ env.DOCKER_IMAGE }} .
           sudo docker save ${{ env.DOCKER_IMAGE }} > docker_image.tar
 
-
-      - name: Login to the DockerHub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      - name: Login to Docker Hub
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
       - name: Push the Docker Image
         run: sudo docker push ${{ env.DOCKER_IMAGE }}

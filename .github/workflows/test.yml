@@ -2,18 +2,28 @@
 name: Test
 
 on:
- workflow_call:
+  workflow_call:
 
 jobs:
   test:
-    runs-on: build-server
-    #needs: build  # Ensures test only runs after build succeeds
+    # Run on your awsubuntu self-hosted runner (labels: self-hosted, Linux, X64)
+    runs-on: [self-hosted, Linux, X64]
+
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+
       - name: Run Unit Tests
         run: mvn test
 
+      # If you want to upload test results as artifacts, uncomment below:
       # - name: Upload Test Results
       #   uses: actions/upload-artifact@v3
       #   with:
       #     name: test-results
-      #     path: target/test-classes/TEST-*.xml
+      #     path: target/surefire-reports/TEST-*.xml

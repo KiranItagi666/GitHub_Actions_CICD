@@ -1,12 +1,14 @@
-# .github/workflows/build.yml
+# .github/workflows/javabuild.yml
 name: Build
 
-on: 
- workflow_call:
+on:
+  workflow_call:
 
 jobs:
   build:
-    runs-on: build-server
+    # Run on your "awsubuntu" self-hosted runner (labels: self-hosted, Linux, X64)
+    runs-on: [self-hosted, Linux, X64]
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -27,16 +29,13 @@ jobs:
       - name: Build with Maven
         run: mvn clean install
 
+      # Optional: Upload Build Artifact (uncomment if needed)
       # - name: Upload Build Artifact
       #   uses: actions/upload-artifact@v3
       #   with:
       #     name: jar
       #     path: target/*.jar
-        
-    #   - name: Configure JFrog CLI
-    # token
-    #     run: |
-    #         jfrog config add my-artifactory --url=https://trial42aeja.jfrog.io --apikey=${{ secrets.JFROG_TOKEN }}
+
       - name: Configure JFrog CLI
         uses: jfrog/setup-jfrog-cli@v3
         with:
@@ -44,6 +43,7 @@ jobs:
         env:
           JF_URL: https://trial0hcn9w.jfrog.io
           JF_ACCESS_TOKEN: ${{ secrets.JFROG_TOKEN }}
+
       - name: Upload JAR to JFrog
         run: |
-           jf rt u "target/*.jar" "kirana_ci_artifact/"     
+          jf rt u "target/*.jar" "kirana_ci_artifact/"
