@@ -35,7 +35,7 @@ jobs:
       - name: Run SonarCloud Analysis
         run: |
           mvn sonar:sonar \
-            -Dsonar.projectKey=kiranitagi666_GitHub_Actions_CICD \
+            -Dsonar.projectKey=KiranItagi666_GitHub_Actions_CICD \
             -Dsonar.organization=kiranitagi666 \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
