@@ -1,11 +1,32 @@
-FROM openjdk:17-oracle
+# .github/workflows/imagepush.yml
+name: Docker Image Build and Push
 
-WORKDIR /home/petclinic/
+on:
+  workflow_call:
 
-COPY ./target/spring-petclinic-3.2.0-SNAPSHOT.jar .
+jobs:
+  image_push:
+    runs-on: java_build
+    env:
+      DOCKER_IMAGE: kviondocker/petapp:${{ github.sha }}
 
-EXPOSE 8080
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
 
-ENV MYSQL_URL=jdbc:mysql://petclinic-mysql:3306/petclinic
+      - name: Download built JAR
+        uses: actions/download-artifact@v3
+        with:
+          name: petclinic-jar
+          path: target/
 
-CMD ["java", "-jar", "spring-petclinic-3.2.0-SNAPSHOT.jar"]
+      - name: Build Docker Image
+        run: |
+          sudo docker build -t ${{ env.DOCKER_IMAGE }} .
+
+      - name: Log in to DockerHub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" \
+                | sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Push Docker Image
+        run: sudo docker push ${{ env.DOCKER_IMAGE }}
