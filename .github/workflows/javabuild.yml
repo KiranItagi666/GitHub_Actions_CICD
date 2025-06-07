@@ -17,7 +17,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'adopt'
+          distribution: 'temurin'
           cache: maven
 
       - name: Cache Maven Dependencies
@@ -29,12 +29,11 @@ jobs:
       - name: Build with Maven
         run: mvn clean install
 
-      # Optional: Upload Build Artifact (uncomment if needed)
-      # - name: Upload Build Artifact
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: jar
-      #     path: target/*.jar
+      - name: Upload built JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: petclinic-jar
+          path: target/spring-petclinic-3.2.0-SNAPSHOT.jar
 
       - name: Configure JFrog CLI
         uses: jfrog/setup-jfrog-cli@v3
@@ -45,5 +44,4 @@ jobs:
           JF_ACCESS_TOKEN: ${{ secrets.JFROG_TOKEN }}
 
       - name: Upload JAR to JFrog
-        run: |
-          jf rt u "target/*.jar" "kirana_ci_artifact/"
+        run: jf rt u "target/*.jar" "kirana_ci_artifact/"
