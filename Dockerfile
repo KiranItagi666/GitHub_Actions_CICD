@@ -1,32 +1,11 @@
-# .github/workflows/imagepush.yml
-name: Docker Image Build and Push
+# Dockerfile
 
-on:
-  workflow_call:
+FROM openjdk:17-oracle
+WORKDIR /home/petclinic/
 
-jobs:
-  image_push:
-    runs-on: java_build
-    env:
-      DOCKER_IMAGE: kviondocker/petapp:${{ github.sha }}
+# Copy in the built Spring Boot jar
+COPY target/spring-petclinic-3.2.0-SNAPSHOT.jar app.jar
 
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
+EXPOSE 8080
 
-      - name: Download built JAR
-        uses: actions/download-artifact@v3
-        with:
-          name: petclinic-jar
-          path: target/
-
-      - name: Build Docker Image
-        run: |
-          sudo docker build -t ${{ env.DOCKER_IMAGE }} .
-
-      - name: Log in to DockerHub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" \
-                | sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
-      - name: Push Docker Image
-        run: sudo docker push ${{ env.DOCKER_IMAGE }}
+ENTRYPOINT ["java","-jar","app.jar"]

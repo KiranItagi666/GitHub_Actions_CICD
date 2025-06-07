@@ -1,27 +1,32 @@
 # .github/workflows/imagepush.yml
-name: Docker image Build and Push
+name: Docker Image Build and Push
 
 on:
   workflow_call:
 
 jobs:
   image_push:
-    runs-on: [self-hosted, Linux, X64]   # Use the awsubuntu runner (labels: self-hosted, Linux, X64)
+    runs-on: java_build
     env:
       DOCKER_IMAGE: kviondocker/petapp:${{ github.sha }}
 
     steps:
-      - name: Check out repository
+      - name: Check out code
         uses: actions/checkout@v3
 
-      - name: Build the Docker Image
+      - name: Download built JAR
+        uses: actions/download-artifact@v3
+        with:
+          name: petclinic-jar
+          path: target/
+
+      - name: Build Docker Image
         run: |
           sudo docker build -t ${{ env.DOCKER_IMAGE }} .
-          sudo docker save ${{ env.DOCKER_IMAGE }} > docker_image.tar
 
-      - name: Login to Docker Hub
-        run: |
-          echo "${{ secrets.DOCKER_PASSWORD }}" | sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+      - name: Log in to DockerHub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" \
+                | sudo docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      - name: Push the Docker Image
+      - name: Push Docker Image
         run: sudo docker push ${{ env.DOCKER_IMAGE }}
