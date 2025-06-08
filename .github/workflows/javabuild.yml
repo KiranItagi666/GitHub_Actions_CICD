@@ -7,7 +7,7 @@ on:
 jobs:
   build:
     # Run on your "awsubuntu" self-hosted runner (labels: self-hosted, Linux, X64)
-    runs-on: [self-hosted, Linux, X64]
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
